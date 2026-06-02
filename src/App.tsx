@@ -105,7 +105,7 @@ const useStyles = makeStyles({
     marginBottom: '16px',
     fontSize: '32px',
     lineHeight: '1.2',
-    background: 'linear-gradient(45deg, #0078d4, #00bcf2)',
+    background: 'linear-gradient(45deg, #005a9e, #0078d4)',
     WebkitBackgroundClip: 'text',
     WebkitFillColor: 'transparent',
     '@media (min-width: 768px)': {
@@ -305,20 +305,20 @@ const App: React.FC = () => {
               <Button
                 appearance="subtle"
                 aria-label="Close"
-                icon={<X size={20} />}
+                icon={<X size={24} />}
                 onClick={() => setIsDrawerOpen(false)}
               />
             }
           >
-            Menu
+            <Box size={24} color={tokens.colorNeutralForeground1} />
           </DrawerHeaderTitle>
         </DrawerHeader>
         <DrawerBody className={styles.drawerBody}>
           <Button 
-            icon={<Globe size={16} />} 
-            appearance="outline" 
+            icon={<Globe size={18} />} 
+            appearance="subtle" 
             onClick={toggleLanguage}
-            style={{ justifyContent: 'start' }}
+            style={{ justifyContent: 'start', padding: '12px' }}
           >
             {i18n.language === 'zh' ? 'Switch to English' : '切换为中文'}
           </Button>
