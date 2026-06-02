@@ -12,7 +12,11 @@ import {
   Card,
   type SelectTabData,
   type SelectTabEvent,
-  Tooltip
+  Tooltip,
+  Drawer,
+  DrawerHeader,
+  DrawerHeaderTitle,
+  DrawerBody,
 } from '@fluentui/react-components';
 import { 
   Globe, 
@@ -23,7 +27,9 @@ import {
   Layout, 
   Apple, 
   Box,
-  Monitor
+  Monitor,
+  Menu,
+  X
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -40,40 +46,81 @@ const useStyles = makeStyles({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '20px 40px',
+    padding: '16px 20px',
     borderBottom: `1px solid ${tokens.colorNeutralStroke1}`,
+    position: 'sticky',
+    top: 0,
+    zIndex: 100,
+    backgroundColor: tokens.colorNeutralBackground1,
+    '@media (min-width: 768px)': {
+      padding: '20px 40px',
+    },
   },
   logo: {
     display: 'flex',
     alignItems: 'center',
     gap: '10px',
     fontWeight: tokens.fontWeightBold,
-    fontSize: '20px',
+    fontSize: '18px',
+    '@media (min-width: 768px)': {
+      fontSize: '20px',
+    },
+  },
+  desktopNav: {
+    display: 'none',
+    '@media (min-width: 768px)': {
+      display: 'flex',
+      gap: '10px',
+    },
+  },
+  mobileMenuBtn: {
+    display: 'flex',
+    '@media (min-width: 768px)': {
+      display: 'none',
+    },
   },
   main: {
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: '60px 20px',
+    padding: '40px 16px',
     maxWidth: '1200px',
     margin: '0 auto',
     width: '100%',
+    boxSizing: 'border-box',
+    '@media (min-width: 768px)': {
+      padding: '60px 20px',
+    },
   },
   hero: {
     textAlign: 'center',
-    marginBottom: '60px',
+    marginBottom: '40px',
     maxWidth: '800px',
+    '@media (min-width: 768px)': {
+      marginBottom: '60px',
+    },
   },
   heroTitle: {
-    marginBottom: '20px',
+    marginBottom: '16px',
+    fontSize: '32px',
+    lineHeight: '1.2',
     background: 'linear-gradient(45deg, #0078d4, #00bcf2)',
     WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
+    WebkitFillColor: 'transparent',
+    '@media (min-width: 768px)': {
+      fontSize: '48px',
+      marginBottom: '20px',
+    },
   },
   heroSubtitle: {
-    marginBottom: '30px',
+    marginBottom: '24px',
+    fontSize: '20px',
     color: tokens.colorNeutralForeground2,
+    '@media (min-width: 768px)': {
+      fontSize: '24px',
+      marginBottom: '30px',
+    },
   },
   screenshotContainer: {
     width: '100%',
@@ -81,13 +128,16 @@ const useStyles = makeStyles({
     aspectRatio: '16/9',
     backgroundColor: tokens.colorNeutralBackground3,
     ...shorthands.borderRadius(tokens.borderRadiusXLarge),
-    ...shorthands.margin('40px', '0'),
+    ...shorthands.margin('30px', '0'),
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
     boxShadow: tokens.shadow64,
     border: `1px solid ${tokens.colorNeutralStroke1}`,
+    '@media (min-width: 768px)': {
+      ...shorthands.margin('40px', '0'),
+    },
   },
   screenshot: {
     width: '100%',
@@ -97,52 +147,93 @@ const useStyles = makeStyles({
   installSection: {
     width: '100%',
     maxWidth: '700px',
-    marginTop: '40px',
+    marginTop: '20px',
+    '@media (min-width: 768px)': {
+      marginTop: '40px',
+    },
   },
   card: {
-    marginTop: '20px',
-    padding: '24px',
+    marginTop: '16px',
+    padding: '16px',
     backgroundColor: tokens.colorNeutralBackground2,
+    '@media (min-width: 768px)': {
+      marginTop: '20px',
+      padding: '24px',
+    },
   },
   codeBlock: {
     backgroundColor: tokens.colorNeutralBackgroundAlpha,
-    padding: '16px',
+    padding: '12px',
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
     fontFamily: tokens.fontFamilyMonospace,
-    fontSize: '14px',
+    fontSize: '12px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: '15px',
+    marginTop: '12px',
     border: `1px solid ${tokens.colorNeutralStroke2}`,
+    overflowX: 'auto',
+    '@media (min-width: 768px)': {
+      padding: '16px',
+      fontSize: '14px',
+      marginTop: '15px',
+    },
+  },
+  codeText: {
+    whiteSpace: 'nowrap',
+    ...shorthands.overflow('hidden'),
+    textOverflow: 'ellipsis',
+    marginRight: '10px',
   },
   footer: {
-    padding: '40px',
+    padding: '30px 20px',
     textAlign: 'center',
     borderTop: `1px solid ${tokens.colorNeutralStroke1}`,
     color: tokens.colorNeutralForeground4,
     fontSize: '12px',
+    '@media (min-width: 768px)': {
+      padding: '40px',
+    },
   },
   tabContent: {
-    marginTop: '20px',
+    marginTop: '16px',
+    '@media (min-width: 768px)': {
+      marginTop: '20px',
+    },
   },
   osTabs: {
-    marginBottom: '20px',
+    marginBottom: '16px',
+    '@media (min-width: 768px)': {
+      marginBottom: '20px',
+    },
   },
   manualList: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '12px',
-    marginTop: '15px',
+    gap: '10px',
+    marginTop: '12px',
+    '@media (min-width: 768px)': {
+      gap: '12px',
+      marginTop: '15px',
+    },
   },
   manualItem: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '12px 16px',
+    padding: '10px 12px',
     backgroundColor: tokens.colorNeutralBackgroundAlpha,
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
     border: `1px solid ${tokens.colorNeutralStroke2}`,
+    '@media (min-width: 768px)': {
+      padding: '12px 16px',
+    },
+  },
+  drawerBody: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px',
+    padding: '20px',
   }
 });
 
@@ -152,10 +243,12 @@ const App: React.FC = () => {
   const [installTab, setInstallTab] = useState<'terminal' | 'manual'>('terminal');
   const [osTab, setOsTab] = useState<'windows' | 'macos_linux'>('windows');
   const [copied, setCopied] = useState(false);
-
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  
   const toggleLanguage = () => {
     const nextLng = i18n.language === 'zh' ? 'en' : 'zh';
     i18n.changeLanguage(nextLng);
+    setIsDrawerOpen(false);
   };
 
   const handleInstallTabChange = (_e: SelectTabEvent, data: SelectTabData) => {
@@ -182,14 +275,55 @@ const App: React.FC = () => {
           <Box size={24} />
           <span>{t('title')}</span>
         </div>
+        
+        <div className={styles.desktopNav}>
+          <Button 
+            icon={<Globe size={16} />} 
+            appearance="subtle" 
+            onClick={toggleLanguage}
+          >
+            {i18n.language === 'zh' ? 'English' : '中文'}
+          </Button>
+        </div>
+
         <Button 
-          icon={<Globe size={16} />} 
+          className={styles.mobileMenuBtn}
+          icon={<Menu size={24} />} 
           appearance="subtle" 
-          onClick={toggleLanguage}
-        >
-          {i18n.language === 'zh' ? 'English' : '中文'}
-        </Button>
+          onClick={() => setIsDrawerOpen(true)}
+        />
       </header>
+
+      <Drawer
+        open={isDrawerOpen}
+        onOpenChange={(_, { open }) => setIsDrawerOpen(open)}
+        position="end"
+      >
+        <DrawerHeader>
+          <DrawerHeaderTitle
+            action={
+              <Button
+                appearance="subtle"
+                aria-label="Close"
+                icon={<X size={20} />}
+                onClick={() => setIsDrawerOpen(false)}
+              />
+            }
+          >
+            Menu
+          </DrawerHeaderTitle>
+        </DrawerHeader>
+        <DrawerBody className={styles.drawerBody}>
+          <Button 
+            icon={<Globe size={16} />} 
+            appearance="outline" 
+            onClick={toggleLanguage}
+            style={{ justifyContent: 'start' }}
+          >
+            {i18n.language === 'zh' ? 'Switch to English' : '切换为中文'}
+          </Button>
+        </DrawerBody>
+      </Drawer>
 
       <main className={styles.main}>
         <section className={styles.hero}>
@@ -234,7 +368,7 @@ const App: React.FC = () => {
                 <Body1>{t('terminal_instruction')}</Body1>
                 
                 <div className={styles.codeBlock}>
-                  <code>{osTab === 'windows' ? winCommand : unixCommand}</code>
+                  <code className={styles.codeText}>{osTab === 'windows' ? winCommand : unixCommand}</code>
                   <Tooltip content={copied ? t('copied') : t('copy')} relationship="label">
                     <Button 
                       icon={copied ? <Check size={16} /> : <Copy size={16} />} 
@@ -253,21 +387,21 @@ const App: React.FC = () => {
                       <Monitor size={18} />
                       <span>Windows (.exe)</span>
                     </div>
-                    <Button icon={<Download size={16} />} appearance="primary">{t('download')}</Button>
+                    <Button size="small" icon={<Download size={16} />} appearance="primary">{t('download')}</Button>
                   </div>
                   <div className={styles.manualItem}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <Apple size={18} />
                       <span>macOS (.dmg)</span>
                     </div>
-                    <Button icon={<Download size={16} />} appearance="primary">{t('download')}</Button>
+                    <Button size="small" icon={<Download size={16} />} appearance="primary">{t('download')}</Button>
                   </div>
                   <div className={styles.manualItem}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <Layout size={18} />
                       <span>Linux (.deb / .rpm)</span>
                     </div>
-                    <Button icon={<Download size={16} />} appearance="primary">{t('download')}</Button>
+                    <Button size="small" icon={<Download size={16} />} appearance="primary">{t('download')}</Button>
                   </div>
                 </div>
               </div>
